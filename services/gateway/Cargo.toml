@@ -11,6 +11,9 @@ path = "src/main.rs"
 name = "gateway"
 
 [dependencies]
+tungstenite = "0.24.0"
+tokio-tungstenite = "0.24.0"
+
 tokio = { version = "1.35.1", features = ["full"] }
 tokio-stream = "0.1.14"
 
@@ -28,6 +31,7 @@ base64-url = "3.0.0"
 sha2 = "0.10.8"
 hmac = "0.12.1"
 argon2 = { version = "0.5.0", features = ["std"] }
+rmp-serde = "1.3.0"
 bitflags = "2.4.0"
 hex = "0.4.3"
 totp-rs = { version = "5.0.2", features = ["gen_secret"] }
@@ -51,6 +55,9 @@ sqlx = { version = "0.7.4", features = [
 ] }
 
 jemallocator = "0.5.4"
+futures-util = "0.3.31"
+log = "0.4.22"
+env_logger = "0.11.5"
 
 [build-dependencies]
 tonic-build = "0.11.0"
