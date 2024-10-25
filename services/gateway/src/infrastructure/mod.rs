@@ -1,1 +1,2 @@
-pub mod websocket_adapter;
+pub mod auth;
+pub mod websocket;
