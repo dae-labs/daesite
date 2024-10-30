@@ -1,13 +1,14 @@
 use futures_util::{stream::StreamExt, SinkExt};
 use log::{debug, error, trace};
 use tokio::net::TcpStream;
-use tokio::time::{self, Duration};
+use tokio::time::{self, Duration, Interval};
 use tokio_tungstenite::{tungstenite::protocol::Message as WsMessage, WebSocketStream};
 use crate::domain::requests::Message;
 
 pub struct Client {
     id: i64,
     socket: WebSocketStream<TcpStream>,
+    heartbeat_interval: Interval,
     missed_heartbeats: usize,
     closed: bool,
 }
@@ -17,12 +18,15 @@ impl Client {
         Self {
             id,
             socket,
+            heartbeat_interval: time::interval(Duration::from_secs(10)),
             missed_heartbeats: 0,
             closed: false,
         }
     }
 
     async fn handle_message(&mut self, msg: Message) -> Result<(), Box<dyn std::error::Error>> {
+        debug!("Received message from: {}", self.id);
+
         match msg {
             Message::Auth { token } => {
                 debug!("Received auth token: {}", token);
@@ -34,19 +38,21 @@ impl Client {
             }
             Message::Heartbeat => {
                 trace!("Received heartbeat from client {}", self.id);
-                self.missed_heartbeats = 0;
+                self.missed_heartbeats = 0; // Reset missed heartbeats here
+                self.heartbeat_interval.reset();
+                debug!("Missed heartbeats reset to 0 for client {}", self.id);
             }
             Message::Echo { message } => {
-                trace!("Echoing message to client {}: {}", self.id, message);
+                debug!("Echoing message to client {}: {}", self.id, message);
                 self.socket.send(WsMessage::Text(message)).await?;
             }
         }
+
         Ok(())
     }
 
     pub async fn run(&mut self) {
-        let mut heartbeat_interval = time::interval(Duration::from_secs(10));
-        heartbeat_interval.set_missed_tick_behavior(time::MissedTickBehavior::Skip);
+        self.heartbeat_interval.set_missed_tick_behavior(time::MissedTickBehavior::Skip);
 
         loop {
             tokio::select! {
@@ -56,8 +62,8 @@ impl Client {
                         trace!("Connection {} closed by client.", self.id);
                         break;
                     }
-                    if let WsMessage::Text(text) = msg {
-                        match rmp_serde::from_slice(text.as_bytes()) {
+                    if let WsMessage::Binary(bytes) = msg {
+                        match rmp_serde::from_slice(&bytes) {
                             Ok(message) => {
                                 if let Err(e) = self.handle_message(message).await {
                                     error!("Error handling message for client {}: {:?}", self.id, e);
@@ -67,7 +73,7 @@ impl Client {
                         }
                     }
                 },
-                _ = heartbeat_interval.tick() => {
+                _ = self.heartbeat_interval.tick() => {
                     if self.missed_heartbeats >= 3 {
                         debug!("Closing connection {} due to missed heartbeats.", self.id);
                         break;
