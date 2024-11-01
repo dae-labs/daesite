@@ -1,9 +1,11 @@
 use futures_util::{stream::StreamExt, SinkExt};
 use log::{debug, error, trace};
+use qrcode::{EcLevel, QrCode, Version};
 use tokio::net::TcpStream;
 use tokio::time::{self, Duration, Interval};
 use tokio_tungstenite::{tungstenite::protocol::Message as WsMessage, WebSocketStream};
 use crate::domain::requests::Message;
+use image::Luma;
 
 use super::error::WebSocketError;
 
@@ -46,11 +48,16 @@ impl Client {
         match msg {
             Message::Auth { token } => {
                 debug!("Received auth token: {}", token);
-                // Authentication logic
+                self.socket.send(WsMessage::Text(self.id.to_string())).await?;
             }
             Message::QrCodeRequest => {
                 trace!("Received QR Code request from client {}", self.id);
-                // QR code generation logic
+                let session_token = "unique_token";
+
+                let code = QrCode::with_version(session_token.as_bytes(), Version::Normal(10), EcLevel::M).unwrap();
+                let image = code.render::<Luma<u8>>().build();
+
+                self.socket.send(WsMessage::Binary(image.to_vec())).await?;
             }
             Message::Heartbeat => {
                 trace!("Received heartbeat from client {}", self.id);
