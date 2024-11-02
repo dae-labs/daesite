@@ -60,6 +60,7 @@ log = "0.4.22"
 env_logger = "0.11.5"
 qrcode = "0.14.1"
 image = "0.25.4"
+flate2 = {version = "1.0.34", features = ["zlib-ng"], default-features = false}
 
 [build-dependencies]
 tonic-build = "0.11.0"
