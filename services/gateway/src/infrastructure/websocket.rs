@@ -58,6 +58,12 @@ impl Client {
             Message::Echo { message } => {
                 debug!("Echoing message to client {}: {}", self.id, message);
             }
+            Message::PublicKey { encoded_public_key } => {
+
+            },
+            Message::Nonce { encrypted_nonce } => {
+
+            },
         }
         Ok(())
     }
