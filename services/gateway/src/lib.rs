@@ -3,8 +3,8 @@ pub mod infrastructure;
 
 use id::Generator;
 use infrastructure::websocket::Client;
-use tokio_tungstenite::accept_async;
 use std::net::SocketAddr;
+use tokio_tungstenite::accept_async;
 
 pub async fn run_server(addr: SocketAddr) {
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
