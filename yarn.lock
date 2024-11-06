@@ -516,28 +516,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@daesite/blog@workspace:applications/blog":
-  version: 0.0.0-use.local
-  resolution: "@daesite/blog@workspace:applications/blog"
-  dependencies:
-    "@daesite/components": "workspace:^"
-    "@daesite/styles": "workspace:^"
-    "@types/node": "npm:^20.14.10"
-    "@types/react": "npm:^18.3.3"
-    "@types/react-dom": "npm:^18.3.0"
-    axios: "npm:^1.7.2"
-    concurrently: "npm:^8.2.2"
-    json-server: "npm:^1.0.0-beta.1"
-    next: "npm:14.2.5"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    sass: "npm:^1.77.8"
-    sharp: "npm:^0.33.4"
-    typescript: "npm:5.5.3"
-    typewriter-effect: "npm:^2.21.0"
-  languageName: unknown
-  linkType: soft
-
 "@daesite/colors@workspace:packages/colors":
   version: 0.0.0-use.local
   resolution: "@daesite/colors@workspace:packages/colors"
@@ -587,7 +565,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@daesite/crypto@workspace:^, @daesite/crypto@workspace:packages/crypto":
+"@daesite/crypto@workspace:packages/crypto":
   version: 0.0.0-use.local
   resolution: "@daesite/crypto@workspace:packages/crypto"
   dependencies:
@@ -683,18 +661,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@daesite/shared@workspace:packages/shared"
   dependencies:
-    "@daesite/crypto": "workspace:^"
-    "@daesite/utils": "workspace:^"
+    "@daesite/crypto": "workspace:packages/crypto"
+    "@daesite/utils": "workspace:packages/utils"
     "@types/lodash": "npm:^4.17.6"
-    "@types/node": "npm:^20.14.10"
+    "@types/node": "npm:^20.14.9"
     "@types/ua-parser-js": "npm:^0.7.39"
-    eslint: "npm:^9.6.0"
+    eslint: "npm:^8.57.0"
     jsbi: "npm:^4.3.0"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.3.2"
-    typescript: "npm:5.5.3"
+    typescript: "npm:5.4.3"
     ua-parser-js: "npm:^1.0.38"
-    vite: "npm:^5.3.3"
+    vite: "npm:^5.3.2"
     vite-plugin-dts: "npm:^3.9.1"
   languageName: unknown
   linkType: soft
