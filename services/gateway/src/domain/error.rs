@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum WebSocketError {
+pub enum GatewayError {
     #[error("Client closed connection")]
     ClientClosedConnection,
     #[error("Missed heartbeats")]

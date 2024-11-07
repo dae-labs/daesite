@@ -1,5 +1,5 @@
 use super::compression::decompress_data;
-use crate::domain::error::WebSocketError;
+use crate::domain::error::GatewayError;
 use crate::domain::requests::Message;
 use futures_util::stream::StreamExt;
 use log::{debug, error, trace};
@@ -8,7 +8,7 @@ use tokio::time::{self, Duration, Interval};
 use tokio_tungstenite::tungstenite::protocol::Message as WsMessage;
 use tokio_tungstenite::WebSocketStream;
 
-pub struct Client {
+pub struct Connection {
     id: i64,
     socket: WebSocketStream<TcpStream>,
     heartbeat_interval: Interval,
@@ -16,7 +16,7 @@ pub struct Client {
     closed: bool,
 }
 
-impl Client {
+impl Connection {
     pub fn new(id: i64, socket: WebSocketStream<TcpStream>) -> Self {
         Self {
             id,
@@ -27,10 +27,10 @@ impl Client {
         }
     }
 
-    async fn handle_incoming_message(&mut self, ws_msg: WsMessage) -> Result<(), WebSocketError> {
+    async fn handle_incoming_message(&mut self, ws_msg: WsMessage) -> Result<(), GatewayError> {
         if ws_msg.is_close() {
             self.close("Connection closed by client").await?;
-            return Err(WebSocketError::ClientClosedConnection);
+            return Err(GatewayError::ClientClosedConnection);
         }
 
         if let WsMessage::Binary(bytes) = ws_msg {
@@ -42,7 +42,7 @@ impl Client {
         Ok(())
     }
 
-    async fn handle_message(&mut self, msg: Message) -> Result<(), WebSocketError> {
+    async fn handle_message(&mut self, msg: Message) -> Result<(), GatewayError> {
         debug!("Received message from client {}: {:?}", self.id, msg);
         match msg {
             Message::Auth { token } => {
@@ -79,11 +79,11 @@ impl Client {
         self.heartbeat_interval.reset();
     }
 
-    async fn handle_heartbeat(&mut self) -> Result<(), WebSocketError> {
+    async fn handle_heartbeat(&mut self) -> Result<(), GatewayError> {
         self.missed_heartbeats += 1;
         if self.missed_heartbeats >= 3 {
             self.close("Missed too many heartbeats").await?;
-            return Err(WebSocketError::MissedHeartbeats);
+            return Err(GatewayError::MissedHeartbeats);
         }
 
         debug!(
@@ -117,10 +117,10 @@ impl Client {
         self.close_socket().await;
     }
 
-    async fn handle_error(&mut self, error: WebSocketError) {
+    async fn handle_error(&mut self, error: GatewayError) {
         if matches!(
             error,
-            WebSocketError::ClientClosedConnection | WebSocketError::MissedHeartbeats
+            GatewayError::ClientClosedConnection | GatewayError::MissedHeartbeats
         ) {
             self.closed = true;
         } else {
@@ -128,7 +128,7 @@ impl Client {
         }
     }
 
-    async fn close(&mut self, reason: &str) -> Result<(), WebSocketError> {
+    async fn close(&mut self, reason: &str) -> Result<(), GatewayError> {
         debug!("Closing connection {}: {}", self.id, reason);
         self.closed = true;
         Ok(self.close_socket().await)
