@@ -7,6 +7,6 @@ pub enum Message {
     QrCodeRequest,
     Heartbeat,
     Echo { message: String },
-    PublicKey { encoded_public_key: String },
+    PublicKey { encoded_public_key: Vec<u8> },
     Nonce { encrypted_nonce: String }
 }

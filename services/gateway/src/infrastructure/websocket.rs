@@ -7,6 +7,7 @@ use tokio::net::TcpStream;
 use tokio::time::{self, Duration, Interval};
 use tokio_tungstenite::tungstenite::protocol::Message as WsMessage;
 use tokio_tungstenite::WebSocketStream;
+use x25519_dalek::PublicKey;
 
 pub struct Connection {
     id: i64,
@@ -14,6 +15,7 @@ pub struct Connection {
     heartbeat_interval: Interval,
     missed_heartbeats: usize,
     closed: bool,
+    public_key: Option<PublicKey>,
 }
 
 impl Connection {
@@ -24,6 +26,7 @@ impl Connection {
             heartbeat_interval: time::interval(Duration::from_secs(20)),
             missed_heartbeats: 0,
             closed: false,
+            public_key: None,
         }
     }
 
@@ -60,6 +63,19 @@ impl Connection {
             }
             Message::PublicKey { encoded_public_key } => {
                 debug!("PublicKey message from client {}", self.id);
+
+                if encoded_public_key.len() == 32 {
+                    let key_array: [u8; 32] = encoded_public_key[..].try_into().unwrap();
+                    self.public_key = Some(PublicKey::from(key_array));
+                    debug!("Stored x25519 public key for client {}.", self.id);
+                } else {
+                    let error_message = format!(
+                        "Invalid public key length for client {}: expected 32 bytes, got {}",
+                        self.id, encoded_public_key.len()
+                    );
+                    error!("{}", error_message);
+                    return Err(GatewayError::PublicKeyDeserializationError(error_message));
+                }
             },
             Message::Nonce { encrypted_nonce } => {
                 debug!("Nonce message from client {}", self.id);
