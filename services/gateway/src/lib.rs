@@ -12,7 +12,14 @@ pub async fn run_server(addr: SocketAddr) {
     println!("WebSocket server running on {}", addr);
 
     while let Ok((stream, _)) = listener.accept().await {
-        let ws_stream = accept_async(stream).await.unwrap();
+        let ws_stream = match accept_async(stream).await {
+            Ok(ws) => ws,
+            Err(e) => {
+                eprintln!("Failed to complete WebSocket handshake: {}", e);
+                continue; // skip this connection and continue to accept new ones
+            }
+        };
+
         let mut client = Connection::new(id_generator.generate(), ws_stream);
         tokio::spawn(async move {
             client.run().await;

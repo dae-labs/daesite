@@ -1,13 +1,19 @@
-use super::compression::decompress_data;
+use base64::prelude::*;
+use futures::SinkExt;
+use rand::rngs::OsRng;
+use rand::RngCore;
+use tungstenite::protocol::frame::coding::CloseCode;
+use tungstenite::protocol::CloseFrame;
+use super::compression::{compress_data, decompress_data};
 use crate::domain::error::GatewayError;
-use crate::domain::requests::Message;
+use crate::domain::messages::Message;
 use futures_util::stream::StreamExt;
 use log::{debug, error, trace};
 use tokio::net::TcpStream;
 use tokio::time::{self, Duration, Interval};
 use tokio_tungstenite::tungstenite::protocol::Message as WsMessage;
 use tokio_tungstenite::WebSocketStream;
-use x25519_dalek::PublicKey;
+use x25519_dalek::{PublicKey, EphemeralSecret};
 
 pub struct Connection {
     id: i64,
@@ -15,7 +21,6 @@ pub struct Connection {
     heartbeat_interval: Interval,
     missed_heartbeats: usize,
     closed: bool,
-    public_key: Option<PublicKey>,
 }
 
 impl Connection {
@@ -26,7 +31,6 @@ impl Connection {
             heartbeat_interval: time::interval(Duration::from_secs(20)),
             missed_heartbeats: 0,
             closed: false,
-            public_key: None,
         }
     }
 
@@ -47,6 +51,9 @@ impl Connection {
 
     async fn handle_message(&mut self, msg: Message) -> Result<(), GatewayError> {
         debug!("Received message from client {}: {:?}", self.id, msg);
+
+        let public_key: PublicKey;
+
         match msg {
             Message::Auth { token } => {
                 debug!("Received auth token: {}", token);
@@ -64,31 +71,75 @@ impl Connection {
             Message::PublicKey { encoded_public_key } => {
                 debug!("PublicKey message from client {}", self.id);
 
-                if encoded_public_key.len() == 32 {
-                    let key_array: [u8; 32] = encoded_public_key[..].try_into().unwrap();
-                    self.public_key = Some(PublicKey::from(key_array));
-                    debug!("Stored x25519 public key for client {}.", self.id);
-                } else {
-                    let error_message = format!(
-                        "Invalid public key length for client {}: expected 32 bytes, got {}",
-                        self.id, encoded_public_key.len()
-                    );
-                    error!("{}", error_message);
-                    return Err(GatewayError::PublicKeyDeserializationError(error_message));
+                match BASE64_STANDARD.decode(&encoded_public_key) {
+                    Ok(decoded_key) if decoded_key.len() == 32 => {
+                        let key_array: [u8; 32] = decoded_key[..].try_into().unwrap();
+                        public_key = PublicKey::from(key_array);
+                    }
+                    Ok(_) => {
+                        let error_message = format!(
+                            "Invalid public key length for client {}: expected 32 bytes, got {}",
+                            self.id, encoded_public_key.len()
+                        );
+                        error!("{}", error_message);
+                        return Err(GatewayError::PublicKeyDeserializationError(error_message));
+                    }
+                    Err(e) => {
+                        let error_message = format!(
+                            "Failed to decode public key for client {}: {:?}",
+                            self.id, e
+                        );
+                        error!("{}", error_message);
+                        return Err(GatewayError::PublicKeyDeserializationError(error_message));
+                    }
                 }
+
+                let mut rng = OsRng;
+                let secret_key = EphemeralSecret::random_from_rng(&mut rng);
+
+                let shared_secret = secret_key.diffie_hellman(&public_key);
+
+                let mut rng = OsRng;
+                let mut nonce = vec![0u8; 32];
+                rng.fill_bytes(&mut nonce);
+
+                let encrypted_nonce: Vec<u8> = nonce.iter()
+                    .zip(shared_secret.as_bytes().iter().cycle())
+                    .map(|(n, s)| n ^ s)
+                    .collect();
+
+                self.send_message(Message::Nonce { encrypted_nonce: BASE64_STANDARD.encode(encrypted_nonce) }).await;
             },
-            Message::Nonce { encrypted_nonce } => {
-                debug!("Nonce message from client {}", self.id);
-            },
+            _ => {
+                debug!("unknown message from client {}", self.id);
+            }
         }
         Ok(())
     }
 
-    //fn generate_qr_code(&self, session_token: &str) -> Result<Vec<u8>, WebSocketError> {
-    //    let code = QrCode::with_version(session_token.as_bytes(), Version::Normal(10), EcLevel::M)?;
-    //    let image = code.render::<Luma<u8>>().build();
-    //    Ok(image.to_vec())
-    //}
+    async fn send_message(&mut self, message: Message) {
+        // Serialize the message into a binary format
+        match rmp_serde::to_vec(&message) {
+            Ok(serialized_message) => {
+                // Compress the serialized message
+                match compress_data(&serialized_message) {
+                    Ok(compressed) => {
+                        // Send the compressed data
+                        let ws_message = WsMessage::Binary(compressed);
+                        if let Err(e) = self.socket.send(ws_message).await {
+                            error!("Failed to send message to client {}: {:?}", self.id, e);
+                        }
+                    }
+                    Err(e) => {
+                        error!("Failed to compress message for client {}: {:?}", self.id, e);
+                    }
+                }
+            }
+            Err(e) => {
+                error!("Failed to serialize message for client {}: {:?}", self.id, e);
+            }
+        }
+    }
 
     fn reset_heartbeat(&mut self) {
         self.missed_heartbeats = 0;
@@ -152,7 +203,12 @@ impl Connection {
 
     async fn close_socket(&mut self) {
         if !self.closed {
-            if let Err(e) = self.socket.close(None).await {
+            let close_frame = CloseFrame {
+                code: CloseCode::Normal,
+                reason: "Closing connection gracefully".into(),
+            };
+
+            if let Err(e) = self.socket.close(Some(close_frame)).await {
                 error!("Error closing WebSocket for client {}: {:?}", self.id, e);
             } else {
                 debug!("Closed connection {} gracefully.", self.id);
