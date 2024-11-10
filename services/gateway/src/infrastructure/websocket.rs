@@ -2,6 +2,8 @@ use base64::prelude::*;
 use futures::SinkExt;
 use rand::rngs::OsRng;
 use rand::RngCore;
+use rmp_serde::{Deserializer, Serializer};
+use serde::{Deserialize, Serialize};
 use tungstenite::protocol::frame::coding::CloseCode;
 use tungstenite::protocol::CloseFrame;
 use super::compression::{compress_data, decompress_data};
@@ -118,6 +120,28 @@ impl Connection {
     }
 
     async fn send_message(&mut self, message: Message) {
+        let mut serialized_message = Vec::new();
+        message.serialize(&mut Serializer::new(&mut serialized_message)).unwrap();
+
+        println!("Serialized Message: {:?}", serialized_message);
+
+        let mut deserializer = Deserializer::new(&serialized_message[..]);
+        let deserialized_msg: Message = Deserialize::deserialize(&mut deserializer).unwrap();
+        println!("Deserialized Message: {:?}", deserialized_msg);
+
+        match compress_data(&serialized_message) {
+            Ok(compressed) => {
+                // Send the compressed data
+                let ws_message = WsMessage::Binary(compressed);
+                if let Err(e) = self.socket.send(ws_message).await {
+                    error!("Failed to send message to client {}: {:?}", self.id, e);
+                }
+            }
+            Err(e) => {
+                error!("Failed to compress message for client {}: {:?}", self.id, e);
+            }
+        }
+        /*
         // Serialize the message into a binary format
         match rmp_serde::to_vec(&message) {
             Ok(serialized_message) => {
@@ -139,6 +163,7 @@ impl Connection {
                 error!("Failed to serialize message for client {}: {:?}", self.id, e);
             }
         }
+         */
     }
 
     fn reset_heartbeat(&mut self) {
