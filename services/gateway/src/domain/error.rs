@@ -22,4 +22,10 @@ pub enum GatewayError {
 
     #[error("Zlib error")]
     ZlibError(#[from] std::io::Error),
+
+    #[error("Compression error")]
+    CompressionError(String),
+
+    #[error("Decompression error")]
+    DecompressionError(String),
 }
