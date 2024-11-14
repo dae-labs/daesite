@@ -2,7 +2,7 @@ pub mod domain;
 pub mod infrastructure;
 
 use id::Generator;
-use infrastructure::websocket::Connection;
+use infrastructure::connection::Connection;
 use std::net::SocketAddr;
 use tokio_tungstenite::accept_async;
 
