@@ -7,6 +7,7 @@ use tungstenite::protocol::CloseFrame;
 use super::compression::{compress_data, decompress_data};
 use crate::domain::error::GatewayError;
 use crate::domain::messages::Message;
+use crate::domain::models::id::ID;
 use futures_util::stream::StreamExt;
 use log::{debug, error, trace};
 use tokio::net::TcpStream;
@@ -16,7 +17,7 @@ use tokio_tungstenite::WebSocketStream;
 use x25519_dalek::{PublicKey, EphemeralSecret};
 
 pub struct Connection {
-    id: i64,
+    id: ID,
     socket: WebSocketStream<TcpStream>,
     heartbeat_interval: Interval,
     missed_heartbeats: usize,
