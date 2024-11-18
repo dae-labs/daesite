@@ -25,7 +25,7 @@ pub struct Connection {
 }
 
 impl Connection {
-    pub fn new(id: i64, socket: WebSocketStream<TcpStream>) -> Self {
+    pub fn new(id: ID, socket: WebSocketStream<TcpStream>) -> Self {
         Self {
             id,
             socket,
