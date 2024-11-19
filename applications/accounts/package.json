@@ -14,24 +14,24 @@
     "@daesite/hooks": "workspace:^",
     "@daesite/styles": "workspace:^",
     "@daesite/utils": "workspace:^",
-    "axios": "^1.7.2",
-    "next": "14.2.5",
+    "axios": "^1.7.7",
+    "next": "15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sharp": "^0.33.4",
-    "zustand": "^4.5.4"
+    "sharp": "^0.33.5",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@redae/nextjs-combine-middleware": "^1.0.1",
-    "@types/node": "^20.14.10",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "concurrently": "^8.2.2",
+    "@types/node": "^22.9.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "concurrently": "^9.1.0",
     "file-loader": "^6.2.0",
-    "json-server": "^1.0.0-beta.1",
-    "sass": "^1.77.8",
-    "typescript": "5.5.3",
+    "json-server": "^1.0.0-beta.3",
+    "sass": "^1.81.0",
+    "typescript": "5.6.3",
     "url-loader": "^4.1.1",
-    "webpack": "^5.93.0"
+    "webpack": "^5.96.1"
   }
 }

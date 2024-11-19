@@ -23,10 +23,10 @@
     "pretty:fix": "prettier --write $(find . -type d \\( -name 'node_modules' -o -name 'dist' \\) -prune -o \\( -type f -name '*.js' -o -name '*.ts' -o -name '*.tsx' \\) -print)"
   },
   "devDependencies": {
-    "eslint": "^9.6.0",
-    "prettier": "^3.3.2",
-    "typescript": "5.5.3",
-    "vite": "^5.3.3",
-    "vite-plugin-dts": "^3.9.1"
+    "eslint": "^9.15.0",
+    "prettier": "^3.3.3",
+    "typescript": "5.6.3",
+    "vite": "^5.4.11",
+    "vite-plugin-dts": "^4.3.0"
   }
 }
