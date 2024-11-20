@@ -10,5 +10,5 @@ pub enum Message {
     PublicKey { encoded_public_key: String },
     QrCode { encoded_qrcode: String },
     Nonce { encrypted_nonce: String },
-    NonceProof { nonce: String }
+    NonceProof { nonce: String },
 }
