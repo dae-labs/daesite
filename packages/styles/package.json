@@ -13,7 +13,7 @@
     "pretty:fix": "prettier --write $(find . -type d \\( -name 'node_modules' -o -name 'dist' \\) -prune -o -print)"
   },
   "dependencies": {
-    "inter-ui": "^4.0.2"
+    "inter-ui": "^4.1.0"
   },
   "devDependencies": {
     "include-media": "^2.0.0",
