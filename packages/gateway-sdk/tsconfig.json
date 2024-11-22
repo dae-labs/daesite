@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "types": ["vite/client"],
+    "paths": {
+      "~/*": ["lib/*"]
+    }
+  },
+  "extends": "../../tsconfig.base.json"
+}

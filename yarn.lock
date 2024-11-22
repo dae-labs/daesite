@@ -593,6 +593,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@daesite/gateway-sdk@workspace:packages/gateway-sdk":
+  version: 0.0.0-use.local
+  resolution: "@daesite/gateway-sdk@workspace:packages/gateway-sdk"
+  dependencies:
+    "@types/msgpack-lite": "npm:^0"
+    "@types/node": "npm:^22.9.1"
+    eslint: "npm:^9.15.0"
+    fflate: "npm:^0.8.2"
+    msgpack-lite: "npm:^0.1.26"
+    prettier: "npm:^3.3.3"
+    tweetnacl: "npm:^1.0.3"
+    typescript: "npm:5.6.3"
+    vite: "npm:^5.4.11"
+    vite-plugin-dts: "npm:^4.3.0"
+  languageName: unknown
+  linkType: soft
+
 "@daesite/hooks@workspace:^, @daesite/hooks@workspace:packages/hooks":
   version: 0.0.0-use.local
   resolution: "@daesite/hooks@workspace:packages/hooks"
@@ -3199,6 +3216,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/msgpack-lite@npm:^0":
+  version: 0.1.11
+  resolution: "@types/msgpack-lite@npm:0.1.11"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/d51a47a20ef5ff9b8b61d33ca3d10c992bbf10c4d4dbcbb7d1f1f9cdb2c8c1a302de36b00e1f11ef954b1bc4730add11b610996cd6ee767624b2bdd572e7b647
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*, @types/node@npm:^20.14.10":
   version: 20.14.10
   resolution: "@types/node@npm:20.14.10"
@@ -5676,6 +5702,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"event-lite@npm:^0.1.1":
+  version: 0.1.3
+  resolution: "event-lite@npm:0.1.3"
+  checksum: 10c0/68d11a1e9001d713d673866fe07f6c310fa9054fc0a936dd5eacc37a793aa6b3331ddb1d85dbcb88ddbe6b04944566a0f1c5b515118e1ec2e640ffcb30858b3f
+  languageName: node
+  linkType: hard
+
 "eventemitter3@npm:^4.0.4":
   version: 4.0.7
   resolution: "eventemitter3@npm:4.0.7"
@@ -6467,7 +6500,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ieee754@npm:^1.1.13":
+"ieee754@npm:^1.1.13, ieee754@npm:^1.1.8":
   version: 1.2.1
   resolution: "ieee754@npm:1.2.1"
   checksum: 10c0/b0782ef5e0935b9f12883a2e2aa37baa75da6e66ce6515c168697b42160807d9330de9a32ec1ed73149aea02e0d822e572bca6f1e22bdcbd2149e13b050b17bb
@@ -6617,6 +6650,13 @@ __metadata:
     through: "npm:^2.3.6"
     wrap-ansi: "npm:^6.0.1"
   checksum: 10c0/eb5724de1778265323f3a68c80acfa899378cb43c24cdcb58661386500e5696b6b0b6c700e046b7aa767fe7b4823c6f04e6ddc268173e3f84116112529016296
+  languageName: node
+  linkType: hard
+
+"int64-buffer@npm:^0.1.9":
+  version: 0.1.10
+  resolution: "int64-buffer@npm:0.1.10"
+  checksum: 10c0/22688f6d1f4db11eaacbf8e7f0b80a23690c29d023987302c367f8c071a53b84fa1cef6f8db0a347e9326f94ff76aa3529e8e9964e99d37fc675f5dcd835ee50
   languageName: node
   linkType: hard
 
@@ -6832,7 +6872,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isarray@npm:~1.0.0":
+"isarray@npm:^1.0.0, isarray@npm:~1.0.0":
   version: 1.0.0
   resolution: "isarray@npm:1.0.0"
   checksum: 10c0/18b5be6669be53425f0b84098732670ed4e727e3af33bc7f948aac01782110eb9a18b3b329c5323bcdd3acdaae547ee077d3951317e7f133bff7105264b3003d
@@ -8058,6 +8098,20 @@ __metadata:
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
   checksum: 10c0/d924b57e7312b3b63ad21fc5b3dc0af5e78d61a1fc7cfb5457edaf26326bf62be5307cc87ffb6862ef1c2b33b0233cdb5d4f01c4c958cc0d660948b65a287a48
+  languageName: node
+  linkType: hard
+
+"msgpack-lite@npm:^0.1.26":
+  version: 0.1.26
+  resolution: "msgpack-lite@npm:0.1.26"
+  dependencies:
+    event-lite: "npm:^0.1.1"
+    ieee754: "npm:^1.1.8"
+    int64-buffer: "npm:^0.1.9"
+    isarray: "npm:^1.0.0"
+  bin:
+    msgpack: ./bin/msgpack
+  checksum: 10c0/ba571dca7d789fa033523b74c1aae52bbd023834bcad3f397f481889a8df6cdb6b163b73307be8b744c420ce6d3c0e697f588bb96984c04f9dcf09370b9f12d4
   languageName: node
   linkType: hard
 
@@ -10790,6 +10844,13 @@ __metadata:
     debug: "npm:^4.3.4"
     make-fetch-happen: "npm:^13.0.1"
   checksum: 10c0/7c17b097571f001730d7be0aeaec6bec46ed2f25bf73990b1133c383d511a1ce65f831e5d6d78770940a85b67664576ff0e4c98e5421bab6d33ff36e4be500c8
+  languageName: node
+  linkType: hard
+
+"tweetnacl@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "tweetnacl@npm:1.0.3"
+  checksum: 10c0/069d9df51e8ad4a89fbe6f9806c68e06c65be3c7d42f0701cc43dba5f0d6064686b238bbff206c5addef8854e3ce00c643bff59432ea2f2c639feab0ee1a93f9
   languageName: node
   linkType: hard
 

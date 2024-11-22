@@ -1,0 +1,36 @@
+{
+  "name": "@daesite/gateway-sdk",
+  "version": "0.1.0",
+  "description": "dae shared",
+  "license": "MIT",
+  "author": "Dmitriy Chukhno <me@dmitr1sdae.com>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "pretty": "prettier --check $(find . -type d \\( -name 'node_modules' -o -name 'dist' \\) -prune -o \\( -type f -name '*.js' -o -name '*.ts' -o -name '*.tsx' \\) -print)",
+    "pretty:fix": "prettier --write $(find . -type d \\( -name 'node_modules' -o -name 'dist' \\) -prune -o \\( -type f -name '*.js' -o -name '*.ts' -o -name '*.tsx' \\) -print)"
+  },
+  "devDependencies": {
+    "@types/msgpack-lite": "^0",
+    "@types/node": "^22.9.1",
+    "eslint": "^9.15.0",
+    "prettier": "^3.3.3",
+    "typescript": "5.6.3",
+    "vite": "^5.4.11",
+    "vite-plugin-dts": "^4.3.0"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2",
+    "msgpack-lite": "^0.1.26",
+    "tweetnacl": "^1.0.3"
+  }
+}
