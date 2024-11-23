@@ -1,8 +1,8 @@
-import {compressData, decompressData} from "~/utils/compression";
+import {compressData, decompressData} from "~/utils";
 
 type OnMaxRetriesReachedCallback = () => void;
 
-export class Gateway {
+class Gateway {
   private socket: WebSocket | null = null;
   private reconnectInterval: number = 1000;
   private maxReconnectInterval: number = 30000;
@@ -99,3 +99,5 @@ export class Gateway {
     this.hasMaxRetriesCallbackBeenCalled = false;
   }
 }
+
+export {Gateway};

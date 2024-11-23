@@ -1,1 +1,1 @@
-export {Gateway} from "./core/Gateway";
+export {Gateway} from "~/core";
