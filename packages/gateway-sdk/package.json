@@ -1,7 +1,7 @@
 {
   "name": "@daesite/gateway-sdk",
   "version": "0.1.0",
-  "description": "dae shared",
+  "description": "A TypeScript-based WebSocket client",
   "license": "MIT",
   "author": "Dmitriy Chukhno <me@dmitr1sdae.com>",
   "type": "module",
