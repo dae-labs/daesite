@@ -2,7 +2,7 @@
 
 import "./StarsBackground.scss";
 
-import stars from "@daesite/styles/assets/video/fullscreen/stars.webm";
+import stars from "@daesite/assets/video/fullscreen/stars.webm";
 
 const StarsBackground = () => {
   return (
