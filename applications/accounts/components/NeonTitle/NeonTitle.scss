@@ -1,0 +1,45 @@
+.epic-title {
+  -webkit-text-fill-color: transparent;
+  font-weight: var(--font-weight-black);
+  font-size: 4rem;
+  color: #d946ef; // Основной цвет текста (фиолетовый)
+  position: relative; // Для псевдоэлементов
+
+  // Свечение за счет текстовой тени
+  text-shadow:
+    0 0 3px #d946ef,
+    0 0 6px #d946ef,
+    0 0 12px #aa00ff,
+    0 0 20px #8000ff;
+
+  // Анимация для эффекта мерцания
+  animation: neon-flicker 1.5s infinite alternate;
+
+  // Плавный переход для визуального эффекта
+  transition: text-shadow 0.2s ease-in-out;
+}
+
+// Анимация мерцания
+@keyframes neon-flicker {
+  0% {
+    text-shadow:
+      0 0 3px #d946ef,
+      0 0 6px #d946ef,
+      0 0 12px #aa00ff,
+      0 0 20px #8000ff;
+  }
+  50% {
+    text-shadow:
+      0 0 2px #d946ef,
+      0 0 4px #d946ef,
+      0 0 8px #aa00ff,
+      0 0 16px #8000ff;
+  }
+  100% {
+    text-shadow:
+      0 0 3px #d946ef,
+      0 0 6px #d946ef,
+      0 0 12px #aa00ff,
+      0 0 20px #8000ff;
+  }
+}
